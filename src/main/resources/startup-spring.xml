@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/util  http://www.springframework.org/schema/util/spring-util.xsd">
+    
+    <!-- server -->
+    <bean id="jetty.server" class="org.eclipse.jetty.server.Server">
+        <property name="stopAtShutdown" value="true"/>
+        <property name="dumpAfterStart" value="false"/>
+        <property name="dumpBeforeStop" value="false"/>
+        <property name="connectors" ref="jetty.connectors"/>
+    </bean>
+    
+    <util:list id="jetty.connectors" list-class="java.util.ArrayList">
+        <bean id="jetty.connector.server" class="org.eclipse.jetty.server.ServerConnector">
+            <constructor-arg index="0" ref="jetty.server"/>
+            <constructor-arg index="1" ref="jetty.connections"/>
+            <property name="port" value = "8080"/>
+            <property name="host" value = "127.0.0.1"/>
+            <property name="idleTimeout" value = "30000"/>
+        </bean>
+    </util:list>
+    
+    <util:list id="jetty.connections" list-class="java.util.ArrayList">
+        <bean id="jetty.connection.http" class="org.eclipse.jetty.server.HttpConnectionFactory">
+            <constructor-arg>
+                <bean class="org.eclipse.jetty.server.HttpConfiguration">
+                    <property name="securePort" value="8442"/><property name="secureScheme" value="https"/>
+                    <property name="headerCacheSize" value="512"/><property name="outputBufferSize" value="32768"/>
+                    <property name="sendDateHeader" value="false"/><property name="sendServerVersion" value="false"/>
+                    <property name="requestHeaderSize" value="8192"/><property name="responseHeaderSize" value="8192"/>
+                </bean>
+            </constructor-arg>
+        </bean>
+    </util:list>
+</beans>
